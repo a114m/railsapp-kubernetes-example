@@ -80,12 +80,12 @@ Read env from global values.
 */}}
 {{- define "rails.env" -}}
 {{- range $global_cm := .Values.global.env_cm -}}
-{{- range $name, $key := $global_cm.data }}
+{{- range $name, $key := $global_cm.data -}}
 - name: {{ $name }}
   valueFrom:
     configMapKeyRef:
       key: {{ $key | quote }}
-      name: {{ $global_cm.cm_name | replace "<local>" $.Release.Namespace | quote -}}
+      name: {{ $global_cm.cm_name | replace "<local>" (printf "%s-drkiq" $.Release.Namespace) | quote -}}
 {{- end -}}
 {{- end -}}
 {{- range $cm := .Values.env_cm -}}
@@ -94,7 +94,7 @@ Read env from global values.
   valueFrom:
     configMapKeyRef:
       key: {{ $key }}
-      name: {{ $cm.cm_name | replace "<local>" $.Release.Namespace | quote -}}
+      name: {{ $cm.cm_name | replace "<local>" (printf "%s-drkiq" $.Release.Namespace) | quote -}}
 {{- end -}}
 {{- end -}}
 {{- range $key, $value := .Values.global.env }}

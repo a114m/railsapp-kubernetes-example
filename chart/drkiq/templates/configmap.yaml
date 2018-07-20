@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{- printf "%s-%s" .Release.Name "configmap" | trunc 63 | trimSuffix "-" -}}
+  name: {{ printf "%s-%s" (include "drkiq.fullname" $) "configmap" | trunc 63 | trimSuffix "-" }}
   labels:
     app: {{ template "drkiq.name" . }}
     chart: {{ template "drkiq.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-{{- range $key, $value := .Values.data }}
-  {{ $key }}: {{ $value | replace "<local>" $.Release.Namespace | quote }}
+{{- range $key, $value := .Values.configmap.data }}
+  {{ $key }}: {{ printf $value | replace "<local>" (include "drkiq.fullname" $) | quote }}
 {{- end }}

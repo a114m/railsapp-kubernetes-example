@@ -2,9 +2,9 @@
 
 # I tried to move as much configurations as possible to the values file so changes mostly occur here
 
-# I Use "<local>-" prefix to refer to a resource in the same chart sinceI follow
-# the convension perfixing all resource under a chart/sub0charts with release name
-# "<local>-" is substitud in the templates
+# I Use "<local>-" prefix to refer to a resource in the same chart since i follow
+# charts convension of perfixing all resource under a chart/sub-charts with
+# releaseName-chartName, which "<local>" is substitud with in the templates
 
 ## Set globals on parent chart to share among all sub-charts
 global:
@@ -56,12 +56,12 @@ postgresql:
   postgresUser: "drkiq"
   postgresPassword: "ForTheNightIsDarkAndFullOfTerror"
 
-redis:
+redis: {}
   # Add values to override/append to redis chart sub-chart values
 
 # Values here are injected into the configmap "configmap"
 configmap:
   data:
     secret_token: "F0rTh!sN!ghtAndA11N!ghtsToC0me"
-    redis_url: redis://<local>-redis-master:6379/0
-    postgres_url: "postgresql://drkiq:ForTheNightIsDarkAndFullOfTerror@<local>-postgres:5432/drkiq?encoding=utf8&pool=5&timeout=5000"
+    redis_url: "redis://<local>-redis-master:6379/0"
+    postgres_url: "postgresql://drkiq:ForTheNightIsDarkAndFullOfTerror@<local>-postgresql:5432/drkiq?encoding=utf8&pool=5&timeout=5000"

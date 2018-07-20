@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "rails.name" . }}
+    app: {{ template "rails.unicornName" . }}
     release: {{ .Release.Name }}
