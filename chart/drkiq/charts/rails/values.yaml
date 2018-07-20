@@ -1,0 +1,58 @@
+# Default values for unicorn.
+
+## Set globals on parent chart to share among multiple sub-charts
+global:
+  env: {}
+    # key: value
+  env_cm: []
+    # - cm_name: some-configmap
+    #   data:
+    #     some_key: some_value
+    #     another_key: another_value
+
+image:
+  repository: a114m/drkiq
+  tag: latest
+  pullPolicy: Always
+
+unicorn:
+  replicaCount: 1
+
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+  health: {}
+
+sidekiq:
+  replicaCount: 1
+  ingress:
+    enabled: false
+
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+  health: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  UNICORN_LISTEN_ON: "0.0.0.0:8000"
+env_cm: []
+  # - cm_name: some-configmap
+  #   data:
+  #     some_key: some_value
+  #     another_key: another_value

@@ -1,0 +1,67 @@
+# Default values for drkiq.
+
+# I tried to move as much configurations as possible to the values file so changes mostly occur here
+
+# I Use "<local>-" prefix to refer to a resource in the same chart sinceI follow
+# the convension perfixing all resource under a chart/sub0charts with release name
+# "<local>-" is substitud in the templates
+
+## Set globals on parent chart to share among all sub-charts
+global:
+  env: {}
+    # key: value
+  env_cm: []
+    # - cm_name: some-configmap
+    #   data:
+    #     some_key: some_value
+    #     another_key: another_value
+
+# Values for rails sub-chart that conrains the rails app (unicorn/sidekiq deployments)
+rails:
+  image:
+    repository: a114m/drkiq
+    tag: latest
+    pullPolicy: Always
+
+  unicorn:
+    resources: {}
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+
+  sidekiq:
+    resources: {}
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+
+  ingress:
+    enabled: true
+    path: /
+    hosts:
+      - dihlab.com
+    # subdomain: staging
+
+  env: # Add directly to rails deployment env
+    UNICORN_WORKER_PROCESSES: 1
+  env_cm: # Read from configmap "cm_name"
+    - cm_name: "<local>-configmap" # this way i referes to the configmap below
+      data:
+        SECRET_TOKEN: secret_token
+        REDIS_URL: redis_url
+        DATABASE_URL: postgres_url
+
+
+postgresql:
+  postgresUser: "drkiq"
+  postgresPassword: "ForTheNightIsDarkAndFullOfTerror"
+
+redis:
+  # Add values to override/append to redis chart sub-chart values
+
+# Values here are injected into the configmap "configmap"
+configmap:
+  data:
+    secret_token: "F0rTh!sN!ghtAndA11N!ghtsToC0me"
+    redis_url: redis://<local>-redis-master:6379/0
+    postgres_url: "postgresql://drkiq:ForTheNightIsDarkAndFullOfTerror@<local>-postgres:5432/drkiq?encoding=utf8&pool=5&timeout=5000"

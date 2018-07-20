@@ -1,0 +1,72 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "rails.sidekiqFullname" . }}
+  labels:
+    app: {{ template "rails.sidekiqName" . }}
+    chart: {{ template "rails.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.sidekiq.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "rails.sidekiqName" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "rails.sidekiqName" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ template "rails.sidekiqName" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          {{- if .Values.sidekiq.health }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.sidekiq.health.livenessProbe.path }}
+              port: http
+            failureThreshold: 3
+            successThreshold: 1
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.sidekiq.health.readinessProbe.path }}
+              port: http
+            failureThreshold: 3
+            successThreshold: 1
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 1
+          {{- end }}
+          resources:
+{{ toYaml .Values.sidekiq.resources | indent 12 }}
+          env:
+{{ include "rails.env" . | indent 12 }}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+    {{- with .Values.sidekiq.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.sidekiq.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.sidekiq.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.sidekiq.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.sidekiq.rollingUpdate.maxUnavailable }}

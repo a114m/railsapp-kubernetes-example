@@ -1,0 +1,46 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullname := include "rails.fullname" . -}}
+{{- $ingressPath := .Values.ingress.path -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}
+  labels:
+    app: {{ template "rails.name" . }}
+    chart: {{ template "rails.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- with .Values.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  rules:
+  {{- range .Values.ingress.hosts -}}
+  {{- if $.Values.ingress.subdomain }}
+    - host: {{ $.Values.ingress.subdomain }}.{{ . }}
+    {{- else }}
+    - host: {{ . }}
+    {{- end }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            backend:
+              serviceName: {{ $fullname }}
+              servicePort: http
+  {{- end }}
+{{- if .Values.ingress.tls }}
+  tls:
+  {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts -}}
+      {{- if $.Values.ingress.subdomain }}
+        - {{ $.Values.ingress.subdomain }}.{{ . }}
+      {{- else }}
+        - {{ . }}
+      {{- end -}}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+{{- end }}
