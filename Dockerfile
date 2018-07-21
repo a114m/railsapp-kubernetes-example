@@ -10,4 +10,4 @@ RUN bundle install
 COPY . .
 
 # The default command that gets ran will be to start the Unicorn server.
-CMD ["exec", "bundle exec unicorn -c config/unicorn.rb"]
+CMD bundle exec unicorn -c config/unicorn.rb
