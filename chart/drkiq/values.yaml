@@ -36,6 +36,8 @@ rails:
       maxUnavailable: 0
 
   ingress:
+    annotations:
+      kubernetes.io/ingress.global-static-ip-name: dihlab-ip
     enabled: true
     path: /
     hosts:

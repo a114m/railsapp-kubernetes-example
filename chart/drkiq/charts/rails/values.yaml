@@ -46,7 +46,7 @@ sidekiq:
   health: {}
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
 
 env:
