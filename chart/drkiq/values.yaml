@@ -54,6 +54,7 @@ rails:
 
 postgresql:
   postgresUser: "drkiq"
+  postgresDatabase: "drkiq_development"
   postgresPassword: "ForTheNightIsDarkAndFullOfTerror"
 
 redis: {}
