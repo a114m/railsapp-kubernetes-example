@@ -55,7 +55,6 @@ Using nginx to serve the assets as the following:
 - Make sure helm client and tiller are installed on the local machine and the cluster
 - Update the [values file](./chart/drkiq/values.yaml) for the following changes and any others needed (instead you can pass values adding `--set k=v` to helm install command)
   - Change `rails.image.repository` and `rails.image.tag` to the image/tag you pushed earlier (default values should work since they're set to image i already pushed)
-  - To route traffic through your domain change `rails.ingress.hosts` your host ex: "myapp.com", and `kubernetes.io/ingress.global-static-ip-name` to the name of static-ip reserved by the provider since I'm using google ingress to route requests (or just ignore and use port-forward just to test it's working)
 
 Now we're ready to install the chart
 

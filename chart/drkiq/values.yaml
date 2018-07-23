@@ -36,12 +36,10 @@ rails:
       maxUnavailable: 0
 
   ingress:
-    annotations:
-      kubernetes.io/ingress.global-static-ip-name: dihlab-ip
+    annotations: {}
     enabled: true
     path: /
-    hosts:
-      - dihlab.com
+    # hosts: [dihlab.com]
     # subdomain: staging
 
   env: # Add directly to rails deployment env
